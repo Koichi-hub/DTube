@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:DTube.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
              x:Class="DTube.Views.MainView"
              x:DataType="vm:MainViewModel">
   <Design.DataContext>
@@ -26,27 +26,36 @@
         </Grid.RowDefinitions>
 
         <!-- Заголовок -->
-        <Border Classes="BaseContainerStyle" Padding="10">
-            <TextBlock Classes="TextStyle" Text="Заголовок" FontSize="20"/>
+        <Border Classes="BaseContainerStyle">
+            <TextBlock Classes="AppNameStyle" Text="DTube"/>
         </Border>
 
         <!-- Контент -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <!-- Сайдбар 30% -->
-                <ColumnDefinition Width="30*"/>
-
-                <!-- Основной контент 70% -->
-                <ColumnDefinition Width="70*"/>
+                <ColumnDefinition MinWidth="400" MaxWidth="600"/>
+                <ColumnDefinition Width="1"/>
+                <ColumnDefinition Width="100*"/>
             </Grid.ColumnDefinitions>
-
+            
             <!-- Сайдбар -->
-            <Border Classes="BaseContainerStyle">
-                <TextBlock Classes="TextStyle" Text="Сайдбар"/>
+            <Border Classes="BaseContainerStyle" Grid.Column="0" MinWidth="100">
+                <StackPanel>
+                    <Border CornerRadius="15" BorderBrush="White" BorderThickness="1">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <TextBox Grid.Column="0" CornerRadius="15 0 0 15"></TextBox>
+                            <Button CornerRadius="0 15 15 0" Grid.Column="1" Background="#FF0033">
+                                <Image Width="16" Height="16" Source="avares://DTube/Assets/search.png" />
+                            </Button>
+                        </Grid>
+                    </Border>
+                </StackPanel>
             </Border>
+            
+            <GridSplitter Background="Black" Grid.Column="1" ResizeDirection="Columns"/>
 
             <!-- Основной контент -->
-            <Border Grid.Column="1" Classes="BaseContainerStyle">
+            <Border Classes="BaseContainerStyle" Grid.Column="2">
                 <TextBlock Classes="TextStyle" Text="Основной контент"/>
             </Border>
         </Grid>
