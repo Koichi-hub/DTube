@@ -41,7 +41,7 @@
             
             <!-- Сайдбар -->
             <Border Classes="BaseContainerStyle" Grid.Column="0" MinWidth="100">
-                <StackPanel>
+                <StackPanel Spacing="10">
                     <!-- Поиск -->
                     <Border CornerRadius="15" BorderBrush="White" BorderThickness="1">
                         <Grid ColumnDefinitions="*, Auto">
@@ -56,52 +56,98 @@
                         </Grid>
                     </Border>
 
-                    <Panel Margin="0 10 0 0" IsVisible="{Binding IsLoaderVisible}">
+                    <!-- Лоадер спиннер -->
+                    <Panel IsVisible="{Binding IsLoaderVisible}">
                         <gif:GifImage Source="avares://DTube/Assets/yt-spinner-loader.gif"/>
                     </Panel>
-                    
+
                     <!-- Медиа блок -->
-                    <StackPanel Margin="0 10 0 0">
-                        <Border BorderBrush="White" BorderThickness="1">
-                            <Image Source="avares://DTube/Assets/media-preview.png"/>
-                        </Border>
-                        <Border Margin="0 10 0 0">
-                            <Grid ColumnDefinitions="Auto, *">
-                                <StackPanel Grid.Column="0" Orientation="Vertical">
-                                    <TextBlock FontWeight="Bold" Text="Название:" Foreground="White" Margin="0 0 0 5"/>
-                                    <TextBlock FontWeight="Bold" Text="Размер:" Foreground="White" Margin="0 0 0 5"/>
-                                    <TextBlock FontWeight="Bold" Text="Длительность:" Foreground="White"/>
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" Orientation="Vertical" Margin="5 0 0 0">
-                                    <TextBlock Text="Какое-то название" Foreground="White" Margin="0 0 0 5"/>
-                                    <TextBlock Text="1 Гб" Foreground="White" Margin="0 0 0 5"/>
-                                    <TextBlock Text="40 минут" Foreground="White"/>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-                        <Border Margin="0 5 0 0">
-                            <StackPanel>
-                                <TextBlock FontWeight="Bold" Foreground="White" Text="Описание:" Margin="0 0 0 5"/>
-                                <TextBlock Foreground="White" Text="Какое-то описание"/>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
+                    <Panel>
+                        <ContentControl Content="{Binding MediaModel}" IsVisible="{Binding IsMediaBlockVisible}">
+                            <ContentControl.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Spacing="10">
+                                        <Border BorderBrush="White" BorderThickness="1">
+                                            <Image Source="avares://DTube/Assets/media-preview.png"/>
+                                        </Border>
+                                        <Grid ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto, Auto, Auto">
+                                            <TextBlock Grid.Row="0" FontWeight="Bold" Text="Название:" Foreground="White" Margin="0 0 5 5"/>
+                                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Title}" Foreground="White"/>
+
+                                            <TextBlock Grid.Row="1" FontWeight="Bold" Text="Размер:" Foreground="White" Margin="0 0 5 5"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="1" Text="1 Гб" Foreground="White"/>
+
+                                            <TextBlock Grid.Row="2" FontWeight="Bold" Text="Длительность:" Foreground="White" Margin="0 0 5 5"/>
+                                            <TextBlock Grid.Row="2" Grid.Column="1" Text="40 минут" Foreground="White"/>
+
+                                            <TextBlock Grid.Row="3" FontWeight="Bold" Foreground="White" Text="Описание:" Margin="0 0 5 5"/>
+                                            <TextBlock Grid.Row="3" Grid.Column="1" Foreground="White" Text="Какое-то описание"/>
+                                        </Grid>
+                                        <Border BorderBrush="White" BorderThickness="1" Padding="10">
+                                            <StackPanel>
+                                                <TextBlock FontWeight="Bold" Foreground="White">Скачать:</TextBlock>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+                                                    <Button CornerRadius="15" Background="#808080">Видео</Button>
+                                                    <Button CornerRadius="15" Background="#808080">Музыка</Button>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ContentControl.ContentTemplate>
+                        </ContentControl>
+                    </Panel>
                 </StackPanel>
             </Border>
             
+            <!-- Разделитель для ресайза -->
             <GridSplitter Background="Black" Grid.Column="1" ResizeDirection="Columns"/>
 
-            <!-- Основной контент -->
+            <!-- Список медиа (видео, музыка) -->
             <Border Classes="BaseContainerStyle" Grid.Column="2">
                 <Grid RowDefinitions="Auto, *">
                     <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
                         <Border Grid.Column="0"/>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
-                            <Button CornerRadius="15 0 0 15" Background="#808080">Видео</Button>
-                            <Button CornerRadius="0 15 15 0" Background="#808080">Музыка</Button>
+                            <ToggleButton IsChecked="{Binding IsVideoFilter}" CornerRadius="15 0 0 15" Background="#808080">Видео</ToggleButton>
+                            <ToggleButton IsChecked="{Binding IsMusicFilter}" CornerRadius="0 15 15 0" Background="#808080">Музыка</ToggleButton>
                         </StackPanel>
                     </Grid>
-                    <Border Grid.Row="1" />
+                    <ListBox Grid.Row="1" Background="#212121" ItemsSource="{Binding MediaModels}">
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="Padding" Value="5"/>
+                                <Setter Property="VerticalAlignment" Value="Top"/>
+                            </Style>
+                        </ListBox.Styles>
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="3"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid RowDefinitions="Auto, Auto">
+                                    <Border Grid.Row="0" BorderBrush="White" BorderThickness="1">
+                                        <Image Source="avares://DTube/Assets/media-preview.png"/>
+                                    </Border>
+                                    <Grid Grid.Row="1" ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto, Auto, Auto" Margin="0 10 0 0">
+                                        <TextBlock Grid.Row="0" FontWeight="Bold" Text="Название:" Foreground="White" Margin="0 0 5 5"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Title}" Foreground="White"/>
+
+                                        <TextBlock Grid.Row="1" FontWeight="Bold" Text="Размер:" Foreground="White" Margin="0 0 5 5"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="1 Гб" Foreground="White"/>
+
+                                        <TextBlock Grid.Row="2" FontWeight="Bold" Text="Длительность:" Foreground="White" Margin="0 0 5 5"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="40 минут" Foreground="White"/>
+
+                                        <TextBlock Grid.Row="3" FontWeight="Bold" Foreground="White" Text="Описание:" Margin="0 0 5 0"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="1" Foreground="White" Text="Какое-то описание"/>
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </Grid>
             </Border>
         </Grid>
