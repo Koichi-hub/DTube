@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
              xmlns:gif="clr-namespace:Avalonia.Labs.Gif;assembly=Avalonia.Labs.Gif"
              xmlns:vm="clr-namespace:DTube.ViewModels"
              mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
@@ -68,20 +69,24 @@
                                 <DataTemplate>
                                     <StackPanel Spacing="10">
                                         <Border BorderBrush="White" BorderThickness="1">
-                                            <Image Source="avares://DTube/Assets/media-preview.png"/>
+                                            <Image Source="avares://DTube/Assets/media-preview.png" asyncImageLoader:ImageLoader.Source="{Binding SourceUrl}"/>
                                         </Border>
                                         <Grid ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto, Auto, Auto">
                                             <TextBlock Grid.Row="0" FontWeight="Bold" Text="Название:" Foreground="White" Margin="0 0 5 5"/>
                                             <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Title}" Foreground="White"/>
 
                                             <TextBlock Grid.Row="1" FontWeight="Bold" Text="Размер:" Foreground="White" Margin="0 0 5 5"/>
-                                            <TextBlock Grid.Row="1" Grid.Column="1" Text="1 Гб" Foreground="White"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SizeInBytes}" Foreground="White"/>
 
                                             <TextBlock Grid.Row="2" FontWeight="Bold" Text="Длительность:" Foreground="White" Margin="0 0 5 5"/>
-                                            <TextBlock Grid.Row="2" Grid.Column="1" Text="40 минут" Foreground="White"/>
+                                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Duration}" Foreground="White"/>
 
                                             <TextBlock Grid.Row="3" FontWeight="Bold" Foreground="White" Text="Описание:" Margin="0 0 5 5"/>
-                                            <TextBlock Grid.Row="3" Grid.Column="1" Foreground="White" Text="Какое-то описание"/>
+                                            <Panel Grid.Row="3" Grid.Column="1" MaxHeight="100">
+                                                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                                                    <TextBlock Foreground="White" Text="{Binding Description}"/>
+                                                </ScrollViewer>
+                                            </Panel>
                                         </Grid>
                                         <Border BorderBrush="White" BorderThickness="1" Padding="10">
                                             <StackPanel>

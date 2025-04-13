@@ -1,10 +1,14 @@
-﻿using DTube.Models;
+﻿using DTube.Common.Enums;
+using DTube.Common.Models;
+using DTube.Controllers;
 using ReactiveUI;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using YoutubeExplode.Videos;
+using YoutubeExplode.Videos.Streams;
+using static DTube.Common.Models.ConfigModel;
 
 namespace DTube.ViewModels;
 
@@ -53,62 +57,20 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private MediaModel mediaModel = new()
+    private MediaMetaDataModel mediaModel = new()
     {
         Title = "Title",
         Description = "Description",
     };
-    public MediaModel MediaModel
+    public MediaMetaDataModel MediaModel
     {
         get => mediaModel;
         set => this.RaiseAndSetIfChanged(ref mediaModel, value);
     }
 
-    private readonly static List<MediaModel> mediaModelsData = [
-        new MediaModel {
-            Title = "Title",
-            Description = "Description",
-            Type = MediaModel.MediaType.Video,
-        },
-        new MediaModel {
-            Title = "Title",
-            Description = "Description",
-            Type = MediaModel.MediaType.Video,
-        },
-        new MediaModel {
-            Title = "Title",
-            Description = "Description",
-            Type = MediaModel.MediaType.Video,
-        },
-        new MediaModel {
-            Title = "Title",
-            Description = "Description",
-            Type = MediaModel.MediaType.Video,
-        },
-        new MediaModel {
-            Title = "Title",
-            Description = "Description",
-            Type = MediaModel.MediaType.Video,
-        },
-        new MediaModel {
-            Title = "Title",
-            Description = "Description",
-            Type = MediaModel.MediaType.Music,
-        },
-        new MediaModel {
-            Title = "Title",
-            Description = "Description",
-            Type = MediaModel.MediaType.Music,
-        },
-        new MediaModel {
-            Title = "Title",
-            Description = "Description",
-            Type = MediaModel.MediaType.Music,
-        },
-        ];
-
-    private List<MediaModel> mediaModels = mediaModelsData;
-    public List<MediaModel> MediaModels
+    private List<MediaMetaDataModel> mediaModelsCache = [];
+    private List<MediaMetaDataModel> mediaModels = [];
+    public List<MediaMetaDataModel> MediaModels
     {
         get => mediaModels;
         set => this.RaiseAndSetIfChanged(ref mediaModels, value);
@@ -118,8 +80,14 @@ public class MainViewModel : ViewModelBase
     public ICommand SearchCommand { get; }
     #endregion
 
-    public MainViewModel()
+    private readonly MainViewModelController controller;
+
+    public MainViewModel(MainViewModelController controller)
     {
+        this.controller = controller;
+        mediaModelsCache = controller.GetMediaMetaData();
+        MediaModels = mediaModelsCache;
+
         SearchCommand = ReactiveCommand.Create(Search);
     }
 
@@ -130,7 +98,7 @@ public class MainViewModel : ViewModelBase
 
         IsLoaderVisible = true;
 
-        await Task.Delay(TimeSpan.FromSeconds(1));
+        MediaModel = await controller.GetMediaAsync(searchText!);
 
         IsLoaderVisible = false;
     }
@@ -139,11 +107,11 @@ public class MainViewModel : ViewModelBase
     {
         if (IsVideoFilter == IsMusicFilter)
         {
-            MediaModels = mediaModelsData;
+            MediaModels = mediaModelsCache;
         } 
         else
         {
-            MediaModels = mediaModelsData.Where(x => (IsVideoFilter && x.Type == MediaModel.MediaType.Video) || (IsMusicFilter && x.Type == MediaModel.MediaType.Music)).ToList();
+            MediaModels = mediaModelsCache.Where(x => (IsVideoFilter && x.Type == MediaType.Video) || (IsMusicFilter && x.Type == MediaType.Music)).ToList();
         }
     }
 }

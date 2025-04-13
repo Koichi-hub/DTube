@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTube", "DTube\DTube.csproj", "{3EB8BFAF-AD35-400B-B870-C50EFD46DAD1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTube.Desktop", "DTube.Desktop\DTube.Desktop.csproj", "{6D1771A5-8646-4C38-98C4-EF45DB48E50D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTubeDomain", "DTubeDomain\DTubeDomain.csproj", "{61181E56-C639-4D32-BA65-5139DC58C690}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +21,6 @@ Global
 		{6D1771A5-8646-4C38-98C4-EF45DB48E50D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D1771A5-8646-4C38-98C4-EF45DB48E50D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D1771A5-8646-4C38-98C4-EF45DB48E50D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{61181E56-C639-4D32-BA65-5139DC58C690}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{61181E56-C639-4D32-BA65-5139DC58C690}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{61181E56-C639-4D32-BA65-5139DC58C690}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{61181E56-C639-4D32-BA65-5139DC58C690}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
