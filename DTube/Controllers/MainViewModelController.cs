@@ -1,4 +1,5 @@
 ﻿using DTube.Common;
+using DTube.Common.Helper;
 using DTube.Common.Models;
 using DTube.Common.Services;
 using System;
@@ -31,8 +32,11 @@ namespace DTube.Controllers
             if (!Directory.Exists(configManager.Config.Media.ContentFolderPath))
                 Directory.CreateDirectory(configManager.Config.Media.ContentFolderPath);
 
-            string filePath = Path.Combine(configManager.Config.Media.ContentFolderPath, Path.GetFileName(tmpFilePath));
-            File.Move(tmpFilePath, filePath);
+            string mp3FilePath = await MediaConvertHelper.ConvertToMP3(tmpFilePath);
+            File.Delete(tmpFilePath);
+
+            string filePath = Path.Combine(configManager.Config.Media.ContentFolderPath, Path.GetFileName(mp3FilePath));
+            File.Move(mp3FilePath, filePath);
             appDataContext.CurrentMedia!.FilePath = filePath;
 
             appDataContext.AddMedia(appDataContext.CurrentMedia!);
