@@ -7,6 +7,14 @@ namespace DTube.Common.DAO
 {
     public class MediaMetaDataDAO(ConfigManager configManager)
     {
+        public void SaveMediaMetaData(List<MediaMetaDataModel> mediaList)
+        {
+            File.WriteAllText(configManager.Config.Media.MetaDataFilePath, JsonConvert.SerializeObject(new MediaJSONScheme
+            {
+                Media = mediaList
+            }));
+        }
+
         public List<MediaMetaDataModel> GetMediaMetaData()
         {
             if (!File.Exists(configManager.Config.Media.MetaDataFilePath))

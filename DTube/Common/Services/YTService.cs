@@ -1,6 +1,7 @@
 ﻿using DTube.Common.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using YoutubeExplode;
@@ -49,6 +50,18 @@ namespace DTube.Common.Services
                 SizeInBytes = sizeInBytes,
                 Duration = video.Duration!.Value.Seconds,
             };
+        }
+
+        public async ValueTask<string> DownloadMusicAsync(string url, string fileName, string outputDirectory)
+        {
+            var video = await youtubeClient.Videos.GetAsync(url);
+
+            var streamManifest = await youtubeClient.Videos.Streams.GetManifestAsync(video.Id);
+            var streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
+
+            string filePath = Path.Combine(outputDirectory, $"{fileName}.{streamInfo.Container}");
+            await youtubeClient.Videos.Streams.DownloadAsync(streamInfo, filePath);
+            return filePath;
         }
     }
 }

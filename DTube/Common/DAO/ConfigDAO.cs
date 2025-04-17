@@ -29,7 +29,7 @@ namespace DTube.Common.DAO
             }
             if (string.IsNullOrWhiteSpace(configModel.Media.ContentFolderPath))
             {
-                configModel.Media.ContentFolderPath = AppDomain.CurrentDomain.BaseDirectory;
+                configModel.Media.ContentFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.MediaContentDefaultPath);
             }
 
             File.WriteAllText(configFilePath, JsonConvert.SerializeObject(configModel));

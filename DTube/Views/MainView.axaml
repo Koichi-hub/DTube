@@ -56,15 +56,22 @@
                             </Button>
                         </Grid>
                     </Border>
-
+                    
+                    <!-- Сообщение об ошибке -->
+                    <Panel IsVisible="{Binding IsError}" MaxHeight="100">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <TextBlock Text="{Binding ErrorMessage}" />
+                        </ScrollViewer>
+                    </Panel>
+                    
                     <!-- Лоадер спиннер -->
                     <Panel IsVisible="{Binding IsLoaderVisible}">
                         <gif:GifImage Source="avares://DTube/Assets/yt-spinner-loader.gif"/>
                     </Panel>
 
                     <!-- Медиа блок -->
-                    <Panel>
-                        <ContentControl Content="{Binding MediaModel}" IsVisible="{Binding IsMediaBlockVisible}">
+                    <Panel IsVisible="{Binding IsMediaBlockVisible}">
+                        <ContentControl Content="{Binding MediaModel}">
                             <ContentControl.ContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Spacing="10">
@@ -93,7 +100,7 @@
                                                 <TextBlock FontWeight="Bold" Foreground="White">Скачать:</TextBlock>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
                                                     <Button CornerRadius="15" Background="#808080">Видео</Button>
-                                                    <Button CornerRadius="15" Background="#808080">Музыка</Button>
+                                                    <Button CornerRadius="15" Background="#808080"  Command="{Binding $parent[ContentControl].DataContext.DownloadMusicCommand}">Музыка</Button>
                                                 </StackPanel>
                                             </StackPanel>
                                         </Border>

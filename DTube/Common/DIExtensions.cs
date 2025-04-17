@@ -10,6 +10,7 @@ namespace DTube.Common
     {
         public static void AddCommonServices(this IServiceCollection services)
         {
+            services.AddSingleton<AppDataContext>();
             services.AddSingleton<ConfigDAO>();
             services.AddSingleton<ConfigManager>();
             services.AddSingleton<MediaMetaDataDAO>();
