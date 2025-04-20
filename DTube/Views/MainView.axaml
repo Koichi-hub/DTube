@@ -59,7 +59,7 @@
                     
                     <!-- Сообщение об ошибке -->
                     <Panel IsVisible="{Binding IsError}" MaxHeight="100">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                             <TextBlock Text="{Binding ErrorMessage}" />
                         </ScrollViewer>
                     </Panel>
@@ -76,7 +76,9 @@
                                 <DataTemplate>
                                     <StackPanel Spacing="10">
                                         <Border BorderBrush="White" BorderThickness="1">
-                                            <Image Source="avares://DTube/Assets/media-preview.png" asyncImageLoader:ImageLoader.Source="{Binding SourceUrl}"/>
+                                            <Viewbox Stretch="Fill" Height="200">
+                                                <Image Source="avares://DTube/Assets/media-preview.png" asyncImageLoader:ImageLoader.Source="{Binding PreviewSourceUrl}"/>
+                                            </Viewbox>
                                         </Border>
                                         <Grid ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto, Auto, Auto">
                                             <TextBlock Grid.Row="0" FontWeight="Bold" Text="Название:" Foreground="White" Margin="0 0 5 5"/>
@@ -99,7 +101,7 @@
                                             <StackPanel>
                                                 <TextBlock FontWeight="Bold" Foreground="White">Скачать:</TextBlock>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
-                                                    <Button CornerRadius="15" Background="#808080">Видео</Button>
+                                                    <Button CornerRadius="15" Background="#808080"  Command="{Binding $parent[ContentControl].DataContext.DownloadVideoCommand}">Видео</Button>
                                                     <Button CornerRadius="15" Background="#808080"  Command="{Binding $parent[ContentControl].DataContext.DownloadMusicCommand}">Музыка</Button>
                                                 </StackPanel>
                                             </StackPanel>
@@ -118,20 +120,14 @@
             <!-- Список медиа (видео, музыка) -->
             <Border Classes="BaseContainerStyle" Grid.Column="2">
                 <Grid RowDefinitions="Auto, *">
-                    <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
+                    <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0 0 0 10">
                         <Border Grid.Column="0"/>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <ToggleButton IsChecked="{Binding IsVideoFilter}" CornerRadius="15 0 0 15" Background="#808080">Видео</ToggleButton>
                             <ToggleButton IsChecked="{Binding IsMusicFilter}" CornerRadius="0 15 15 0" Background="#808080">Музыка</ToggleButton>
                         </StackPanel>
                     </Grid>
-                    <ListBox Grid.Row="1" Background="#212121" ItemsSource="{Binding MediaModels}">
-                        <ListBox.Styles>
-                            <Style Selector="ListBoxItem">
-                                <Setter Property="Padding" Value="5"/>
-                                <Setter Property="VerticalAlignment" Value="Top"/>
-                            </Style>
-                        </ListBox.Styles>
+                    <ListBox Classes="MediaItemContainer" Grid.Row="1" ItemsSource="{Binding MediaModels}">
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <UniformGrid Columns="3"/>
@@ -139,24 +135,34 @@
                         </ListBox.ItemsPanel>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Grid RowDefinitions="Auto, Auto">
-                                    <Border Grid.Row="0" BorderBrush="White" BorderThickness="1">
-                                        <Image Source="avares://DTube/Assets/media-preview.png"/>
-                                    </Border>
-                                    <Grid Grid.Row="1" ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto, Auto, Auto" Margin="0 10 0 0">
-                                        <TextBlock Grid.Row="0" FontWeight="Bold" Text="Название:" Foreground="White" Margin="0 0 5 5"/>
-                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Title}" Foreground="White"/>
+                                <Border Classes="MediaItem">
+                                    <Border.ContextFlyout>
+                                        <Flyout FlyoutPresenterClasses="FlyoutMediaContextMenu">
+                                            <StackPanel Classes="MediaContextMenu">
+                                                <Button Classes="MediaContextMenuItem" Content="Копировать" HorizontalAlignment="Stretch" Command="{Binding $parent[ListBox].DataContext.CopyMediaCommand}" CommandParameter="{Binding Id}"/>
+                                                <Button Classes="MediaContextMenuItem" Content="Открыть в проводнике" HorizontalAlignment="Stretch"/>
+                                                <Button Classes="MediaContextMenuItem" Content="Удалить" HorizontalAlignment="Stretch"/>
+                                            </StackPanel>
+                                        </Flyout>
+                                    </Border.ContextFlyout>
+                                    <Grid RowDefinitions="Auto, Auto">
+                                        <Border Grid.Row="0" BorderBrush="White" BorderThickness="1">
+                                            <Viewbox Stretch="Fill" Height="200">
+                                                <Image Source="avares://DTube/Assets/media-preview.png" asyncImageLoader:ImageLoader.Source="{Binding PreviewFilePath}"/>
+                                            </Viewbox>
+                                        </Border>
+                                        <Grid Grid.Row="1" ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto, Auto" Margin="0 10 0 0">
+                                            <TextBlock Grid.Row="0" FontWeight="Bold" Text="Название:" Foreground="White" Margin="0 0 5 5"/>
+                                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Title}" TextTrimming="CharacterEllipsis" Foreground="White"/>
 
-                                        <TextBlock Grid.Row="1" FontWeight="Bold" Text="Размер:" Foreground="White" Margin="0 0 5 5"/>
-                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="1 Гб" Foreground="White"/>
+                                            <TextBlock Grid.Row="1" FontWeight="Bold" Text="Размер:" Foreground="White" Margin="0 0 5 5"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SizeInBytes}" Foreground="White"/>
 
-                                        <TextBlock Grid.Row="2" FontWeight="Bold" Text="Длительность:" Foreground="White" Margin="0 0 5 5"/>
-                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="40 минут" Foreground="White"/>
-
-                                        <TextBlock Grid.Row="3" FontWeight="Bold" Foreground="White" Text="Описание:" Margin="0 0 5 0"/>
-                                        <TextBlock Grid.Row="3" Grid.Column="1" Foreground="White" Text="Какое-то описание"/>
+                                            <TextBlock Grid.Row="2" FontWeight="Bold" Text="Длительность:" Foreground="White" Margin="0 0 5 0"/>
+                                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Duration}" Foreground="White"/>
+                                        </Grid>
                                     </Grid>
-                                </Grid>
+                                </Border>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>

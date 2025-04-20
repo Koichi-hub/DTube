@@ -1,5 +1,4 @@
 ﻿using DTube.Common.Models;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -44,7 +43,8 @@ namespace DTube.Common.Services
 
             return new MediaMetaDataModel
             {
-                SourceUrl = videoThumbnail.Url,
+                SourceUrl = url,
+                PreviewSourceUrl = videoThumbnail.Url,
                 Title = video.Title,
                 Description = video.Description,
                 SizeInBytes = sizeInBytes,
@@ -52,15 +52,21 @@ namespace DTube.Common.Services
             };
         }
 
-        public async ValueTask<string> DownloadMusicAsync(string url, string fileName, string outputDirectory)
+        public async Task<string> DownloadMediaAsync(string url, string fileName, string outputDirectory, bool isAudio = true)
         {
             var video = await youtubeClient.Videos.GetAsync(url);
 
             var streamManifest = await youtubeClient.Videos.Streams.GetManifestAsync(video.Id);
-            var streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
+            IStreamInfo streamInfo;
+
+            if (isAudio)
+                streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
+            else
+                streamInfo = streamManifest.GetVideoOnlyStreams().GetWithHighestBitrate();
 
             string filePath = Path.Combine(outputDirectory, $"{fileName}.{streamInfo.Container}");
             await youtubeClient.Videos.Streams.DownloadAsync(streamInfo, filePath);
+
             return filePath;
         }
     }

@@ -10,11 +10,15 @@ namespace DTube.Common
     {
         public static void AddCommonServices(this IServiceCollection services)
         {
+            //IHttpClientFactory
+            services.AddHttpClient();
+
             services.AddSingleton<AppDataContext>();
             services.AddSingleton<ConfigDAO>();
             services.AddSingleton<ConfigManager>();
             services.AddSingleton<MediaMetaDataDAO>();
             services.AddSingleton<YTService>();
+            services.AddSingleton<ImageService>();
 
             services.AddTransient<MainViewModelController>();
             services.AddTransient<MainViewModel>();

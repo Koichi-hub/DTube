@@ -1,4 +1,8 @@
-﻿using DTube.Common;
+﻿using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
+using Avalonia.Platform.Storage;
+using DTube.Common;
 using DTube.Common.Enums;
 using DTube.Common.Models;
 using DTube.Controllers;
@@ -95,6 +99,8 @@ public class MainViewModel : ViewModelBase
     #region Commands
     public ICommand SearchCommand { get; }
     public ICommand DownloadMusicCommand { get; }
+    public ICommand DownloadVideoCommand { get; }
+    public ReactiveCommand<Guid, Task> CopyMediaCommand { get; }
     #endregion
 
     private readonly MainViewModelController controller;
@@ -109,6 +115,8 @@ public class MainViewModel : ViewModelBase
 
         SearchCommand = ReactiveCommand.Create(Search);
         DownloadMusicCommand = ReactiveCommand.Create(DownloadMusic);
+        DownloadVideoCommand = ReactiveCommand.Create(DownloadVideo);
+        CopyMediaCommand = ReactiveCommand.Create<Guid, Task>(CopyMedia);
     }
 
     private void UpdateMediaCache()
@@ -175,6 +183,55 @@ public class MainViewModel : ViewModelBase
         }
 
         IsLoaderVisible = false;
+    }
+
+    public async Task DownloadVideo()
+    {
+        if (IsLoaderVisible)
+            return;
+
+        IsLoaderVisible = true;
+        IsError = false;
+
+        if (string.IsNullOrWhiteSpace(searchText))
+            return;
+
+        try
+        {
+            await controller.DownloadVideoAsync(searchText!);
+            IsError = false;
+            ErrorMessage = string.Empty;
+        }
+        catch (Exception e)
+        {
+            IsError = true;
+            ErrorMessage = e.Message;
+        }
+
+        IsLoaderVisible = false;
+    }
+
+    public async Task CopyMedia(Guid mediaId)
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
+            desktop.MainWindow?.Clipboard is not { } clipboard || desktop.MainWindow?.StorageProvider is not { } storageProvider)
+        {
+            IsError = true;
+            ErrorMessage = "Буфер обмена недоступен";
+            return;
+        }
+
+        MediaMetaDataModel? media = MediaModels.FirstOrDefault(x => x.Id == mediaId);
+        if (media == null)
+            return;
+
+        IStorageFile? file = await storageProvider.TryGetFileFromPathAsync(media.FilePath);
+        if (file != null)
+        {
+            DataObject dataObject = new();
+            dataObject.Set(DataFormats.Files, new List<IStorageFile> { file });
+            await clipboard.SetDataObjectAsync(dataObject);
+        }
     }
 
     private void FilterMedia()
