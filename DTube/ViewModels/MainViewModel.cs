@@ -9,6 +9,7 @@ using DTube.Controllers;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -101,6 +102,8 @@ public class MainViewModel : ViewModelBase
     public ICommand DownloadMusicCommand { get; }
     public ICommand DownloadVideoCommand { get; }
     public ReactiveCommand<Guid, Task> CopyMediaCommand { get; }
+    public ReactiveCommand<Guid, Task> OpenMediaInExplorerCommand { get; }
+    public ReactiveCommand<Guid, Task> PlayMediaCommand { get; }
     #endregion
 
     private readonly MainViewModelController controller;
@@ -117,6 +120,8 @@ public class MainViewModel : ViewModelBase
         DownloadMusicCommand = ReactiveCommand.Create(DownloadMusic);
         DownloadVideoCommand = ReactiveCommand.Create(DownloadVideo);
         CopyMediaCommand = ReactiveCommand.Create<Guid, Task>(CopyMedia);
+        OpenMediaInExplorerCommand = ReactiveCommand.Create<Guid, Task>(OpenMediaInExplorer);
+        PlayMediaCommand = ReactiveCommand.Create<Guid, Task>(PlayMedia);
     }
 
     private void UpdateMediaCache()
@@ -232,6 +237,40 @@ public class MainViewModel : ViewModelBase
             dataObject.Set(DataFormats.Files, new List<IStorageFile> { file });
             await clipboard.SetDataObjectAsync(dataObject);
         }
+    }
+
+    public async Task OpenMediaInExplorer(Guid mediaId)
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
+            desktop.MainWindow?.Launcher is not { } launcher)
+        {
+            IsError = true;
+            ErrorMessage = "Лаунчер недоступен";
+            return;
+        }
+
+        MediaMetaDataModel? media = MediaModels.FirstOrDefault(x => x.Id == mediaId);
+        if (media == null)
+            return;
+
+        await launcher.LaunchDirectoryInfoAsync(new DirectoryInfo(Path.GetDirectoryName(media.FilePath)!));
+    }
+
+    public async Task PlayMedia(Guid mediaId)
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
+            desktop.MainWindow?.Launcher is not { } launcher)
+        {
+            IsError = true;
+            ErrorMessage = "Лаунчер недоступен";
+            return;
+        }
+
+        MediaMetaDataModel? media = MediaModels.FirstOrDefault(x => x.Id == mediaId);
+        if (media == null)
+            return;
+
+        await launcher.LaunchFileInfoAsync(new FileInfo(media.FilePath));
     }
 
     private void FilterMedia()

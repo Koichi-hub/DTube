@@ -49,7 +49,7 @@
         <Setter Property="Background" Value="#FF0033"/>
     </Style>
     <Style Selector="Button.MediaContextMenuItem:pressed">
-        <Setter Property="RenderTransform" Value="none"/>
+        <Setter Property="RenderTransform" Value="scale(0.95)"/>
     </Style>
     
     <!-- Media Item -->

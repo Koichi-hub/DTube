@@ -140,7 +140,8 @@
                                         <Flyout FlyoutPresenterClasses="FlyoutMediaContextMenu">
                                             <StackPanel Classes="MediaContextMenu">
                                                 <Button Classes="MediaContextMenuItem" Content="Копировать" HorizontalAlignment="Stretch" Command="{Binding $parent[ListBox].DataContext.CopyMediaCommand}" CommandParameter="{Binding Id}"/>
-                                                <Button Classes="MediaContextMenuItem" Content="Открыть в проводнике" HorizontalAlignment="Stretch"/>
+                                                <Button Classes="MediaContextMenuItem" Content="Открыть в проводнике" HorizontalAlignment="Stretch" Command="{Binding $parent[ListBox].DataContext.OpenMediaInExplorerCommand}" CommandParameter="{Binding Id}"/>
+                                                <Button Classes="MediaContextMenuItem" Content="Запустить" HorizontalAlignment="Stretch" Command="{Binding $parent[ListBox].DataContext.PlayMediaCommand}" CommandParameter="{Binding Id}"/>
                                                 <Button Classes="MediaContextMenuItem" Content="Удалить" HorizontalAlignment="Stretch"/>
                                             </StackPanel>
                                         </Flyout>
