@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -104,6 +105,7 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<Guid, Task> CopyMediaCommand { get; }
     public ReactiveCommand<Guid, Task> OpenMediaInExplorerCommand { get; }
     public ReactiveCommand<Guid, Task> PlayMediaCommand { get; }
+    public ReactiveCommand<Guid, Unit> DeleteMediaCommand { get; }
     #endregion
 
     private readonly MainViewModelController controller;
@@ -122,6 +124,7 @@ public class MainViewModel : ViewModelBase
         CopyMediaCommand = ReactiveCommand.Create<Guid, Task>(CopyMedia);
         OpenMediaInExplorerCommand = ReactiveCommand.Create<Guid, Task>(OpenMediaInExplorer);
         PlayMediaCommand = ReactiveCommand.Create<Guid, Task>(PlayMedia);
+        DeleteMediaCommand = ReactiveCommand.Create<Guid>(DeleteMedia);
     }
 
     private void UpdateMediaCache()
@@ -271,6 +274,25 @@ public class MainViewModel : ViewModelBase
             return;
 
         await launcher.LaunchFileInfoAsync(new FileInfo(media.FilePath));
+    }
+
+    public void DeleteMedia(Guid mediaId)
+    {
+        MediaMetaDataModel? media = MediaModels.FirstOrDefault(x => x.Id == mediaId);
+        if (media == null)
+            return;
+
+        try
+        {
+            controller.DeleteMediaAsync(media);
+            IsError = false;
+            ErrorMessage = string.Empty;
+        }
+        catch (Exception e)
+        {
+            IsError = true;
+            ErrorMessage = e.Message;
+        }
     }
 
     private void FilterMedia()

@@ -19,6 +19,13 @@ namespace DTube.Common
             OnUpdated?.Invoke();
         }
 
+        public void DeleteMedia(MediaMetaDataModel media)
+        {
+            MediaList.RemoveAll(x => x.Id == media.Id);
+            mediaMetaDataDAO.SaveMediaMetaData(MediaList);
+            OnUpdated?.Invoke();
+        }
+
         public void InitMediaList()
         {
             MediaList.AddRange(mediaMetaDataDAO.GetMediaMetaData());

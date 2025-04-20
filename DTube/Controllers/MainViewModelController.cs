@@ -32,7 +32,8 @@ namespace DTube.Controllers
             if (!Directory.Exists(Constants.MediaPreviewImageFolderPath))
                 Directory.CreateDirectory(Constants.MediaPreviewImageFolderPath);
 
-            string tmpFileName = "audio_" + Guid.NewGuid().ToString();
+            Guid mediaId = Guid.NewGuid();
+            string tmpFileName = "audio_" + mediaId.ToString();
             string tmpFilePath = await ytService.DownloadMediaAsync(url, tmpFileName, Constants.TMPFolderPath);
 
             string mp3FilePath = await MediaHelper.ConvertToMP3(tmpFilePath);
@@ -47,6 +48,7 @@ namespace DTube.Controllers
                 fileName: Path.GetFileNameWithoutExtension(filePath), 
                 outputDirectory: Constants.MediaPreviewImageFolderPath);
 
+            appDataContext.CurrentMedia.Id = mediaId;
             appDataContext.CurrentMedia.Type = Common.Enums.MediaType.Music;
             appDataContext.AddMedia(appDataContext.CurrentMedia);
         }
@@ -62,9 +64,9 @@ namespace DTube.Controllers
             if (!Directory.Exists(Constants.MediaPreviewImageFolderPath))
                 Directory.CreateDirectory(Constants.MediaPreviewImageFolderPath);
 
-            string guid = Guid.NewGuid().ToString();
-            string audioFileName = "audio_" + guid;
-            string videoFileName = "video_" + guid;
+            Guid mediaId = Guid.NewGuid();
+            string audioFileName = "audio_" + mediaId.ToString();
+            string videoFileName = "video_" + mediaId.ToString();
 
             string tmpAudioFilePath = await ytService.DownloadMediaAsync(url, audioFileName, Constants.TMPFolderPath);
             string tmpVideoFilePath = await ytService.DownloadMediaAsync(url, videoFileName, Constants.TMPFolderPath, isAudio: false);
@@ -82,8 +84,16 @@ namespace DTube.Controllers
                 fileName: Path.GetFileNameWithoutExtension(filePath),
                 outputDirectory: Constants.MediaPreviewImageFolderPath);
 
+            appDataContext.CurrentMedia.Id = mediaId;
             appDataContext.CurrentMedia.Type = Common.Enums.MediaType.Video;
             appDataContext.AddMedia(appDataContext.CurrentMedia);
+        }
+
+        public void DeleteMediaAsync(MediaMetaDataModel media)
+        {
+            File.Delete(media.FilePath);
+            File.Delete(media.PreviewFilePath);
+            appDataContext.DeleteMedia(media);
         }
     }
 }
