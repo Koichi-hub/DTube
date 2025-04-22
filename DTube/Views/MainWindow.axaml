@@ -8,5 +8,5 @@
         x:Class="DTube.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="DTube">
-        <views:MainView />
+        <views:MainView x:Name="MainView" />
 </Window>

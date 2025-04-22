@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -80,6 +79,8 @@ public class MainViewModel : ViewModelBase
         }
     }
 
+    public MediaMetaDataModel? SelectedMediaListItem { get; set; }
+
     private MediaMetaDataModel mediaModel = new()
     {
         Title = "Title",
@@ -102,10 +103,10 @@ public class MainViewModel : ViewModelBase
     public ICommand SearchCommand { get; }
     public ICommand DownloadMusicCommand { get; }
     public ICommand DownloadVideoCommand { get; }
-    public ReactiveCommand<Guid, Task> CopyMediaCommand { get; }
-    public ReactiveCommand<Guid, Task> OpenMediaInExplorerCommand { get; }
-    public ReactiveCommand<Guid, Task> PlayMediaCommand { get; }
-    public ReactiveCommand<Guid, Unit> DeleteMediaCommand { get; }
+    public ICommand CopyMediaCommand { get; }
+    public ICommand OpenMediaInExplorerCommand { get; }
+    public ICommand PlayMediaCommand { get; }
+    public ICommand DeleteMediaCommand { get; }
     #endregion
 
     private readonly MainViewModelController controller;
@@ -121,10 +122,10 @@ public class MainViewModel : ViewModelBase
         SearchCommand = ReactiveCommand.Create(Search);
         DownloadMusicCommand = ReactiveCommand.Create(DownloadMusic);
         DownloadVideoCommand = ReactiveCommand.Create(DownloadVideo);
-        CopyMediaCommand = ReactiveCommand.Create<Guid, Task>(CopyMedia);
-        OpenMediaInExplorerCommand = ReactiveCommand.Create<Guid, Task>(OpenMediaInExplorer);
-        PlayMediaCommand = ReactiveCommand.Create<Guid, Task>(PlayMedia);
-        DeleteMediaCommand = ReactiveCommand.Create<Guid>(DeleteMedia);
+        CopyMediaCommand = ReactiveCommand.Create(CopyMedia);
+        OpenMediaInExplorerCommand = ReactiveCommand.Create(OpenMediaInExplorer);
+        PlayMediaCommand = ReactiveCommand.Create(PlayMedia);
+        DeleteMediaCommand = ReactiveCommand.Create(DeleteMedia);
     }
 
     private void UpdateMediaCache()
@@ -219,7 +220,7 @@ public class MainViewModel : ViewModelBase
         IsLoaderVisible = false;
     }
 
-    public async Task CopyMedia(Guid mediaId)
+    public async Task CopyMedia()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
             desktop.MainWindow?.Clipboard is not { } clipboard || desktop.MainWindow?.StorageProvider is not { } storageProvider)
@@ -229,9 +230,7 @@ public class MainViewModel : ViewModelBase
             return;
         }
 
-        MediaMetaDataModel? media = MediaModels.FirstOrDefault(x => x.Id == mediaId);
-        if (media == null)
-            return;
+        MediaMetaDataModel media = SelectedMediaListItem!;
 
         IStorageFile? file = await storageProvider.TryGetFileFromPathAsync(media.FilePath);
         if (file != null)
@@ -242,7 +241,7 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    public async Task OpenMediaInExplorer(Guid mediaId)
+    public async Task OpenMediaInExplorer()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
             desktop.MainWindow?.Launcher is not { } launcher)
@@ -252,14 +251,12 @@ public class MainViewModel : ViewModelBase
             return;
         }
 
-        MediaMetaDataModel? media = MediaModels.FirstOrDefault(x => x.Id == mediaId);
-        if (media == null)
-            return;
+        MediaMetaDataModel media = SelectedMediaListItem!;
 
         await launcher.LaunchDirectoryInfoAsync(new DirectoryInfo(Path.GetDirectoryName(media.FilePath)!));
     }
 
-    public async Task PlayMedia(Guid mediaId)
+    public async Task PlayMedia()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
             desktop.MainWindow?.Launcher is not { } launcher)
@@ -269,18 +266,14 @@ public class MainViewModel : ViewModelBase
             return;
         }
 
-        MediaMetaDataModel? media = MediaModels.FirstOrDefault(x => x.Id == mediaId);
-        if (media == null)
-            return;
+        MediaMetaDataModel media = SelectedMediaListItem!;
 
         await launcher.LaunchFileInfoAsync(new FileInfo(media.FilePath));
     }
 
-    public void DeleteMedia(Guid mediaId)
+    public void DeleteMedia()
     {
-        MediaMetaDataModel? media = MediaModels.FirstOrDefault(x => x.Id == mediaId);
-        if (media == null)
-            return;
+        MediaMetaDataModel media = SelectedMediaListItem!;
 
         try
         {

@@ -34,24 +34,6 @@
         <Setter Property="HorizontalAlignment" Value="Left"/>
     </Style>
 
-    <!-- Context Menu -->
-    <Style Selector="FlyoutPresenter.FlyoutMediaContextMenu">
-        <Setter Property="Padding" Value="0"/>
-    </Style>
-    <Style Selector="StackPanel.MediaContextMenu">
-        <Setter Property="Orientation" Value="Vertical"/>
-    </Style>
-    <Style Selector="Button.MediaContextMenuItem">
-        <Setter Property="Padding" Value="10"/>
-        <Setter Property="Background" Value="#212121"/>
-    </Style>
-    <Style Selector="Button.MediaContextMenuItem:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="#FF0033"/>
-    </Style>
-    <Style Selector="Button.MediaContextMenuItem:pressed">
-        <Setter Property="RenderTransform" Value="scale(0.95)"/>
-    </Style>
-    
     <!-- Media Item -->
     <Style Selector="ListBox.MediaItemContainer ListBoxItem">
         <Setter Property="VerticalAlignment" Value="Top"/>

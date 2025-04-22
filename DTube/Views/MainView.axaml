@@ -127,25 +127,23 @@
                             <ToggleButton IsChecked="{Binding IsMusicFilter}" CornerRadius="0 15 15 0" Background="#808080">Музыка</ToggleButton>
                         </StackPanel>
                     </Grid>
-                    <ListBox Classes="MediaItemContainer" Grid.Row="1" ItemsSource="{Binding MediaModels}">
+                    <ListBox Classes="MediaItemContainer" SelectedItem="{Binding SelectedMediaListItem}" Grid.Row="1" ItemsSource="{Binding MediaModels}">
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <UniformGrid Columns="3"/>
                             </ItemsPanelTemplate>
                         </ListBox.ItemsPanel>
+                        <ListBox.ContextFlyout>
+                            <MenuFlyout>
+                                <MenuItem Header="Копировать" Command="{Binding CopyMediaCommand}"/>
+                                <MenuItem Header="Открыть в проводнике" Command="{Binding OpenMediaInExplorerCommand}"/>
+                                <MenuItem Header="Запустить" Command="{Binding PlayMediaCommand}"/>
+                                <MenuItem Header="Удалить" Command="{Binding DeleteMediaCommand}"/>
+                            </MenuFlyout>
+                        </ListBox.ContextFlyout>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Border Classes="MediaItem">
-                                    <Border.ContextFlyout>
-                                        <Flyout FlyoutPresenterClasses="FlyoutMediaContextMenu">
-                                            <StackPanel Classes="MediaContextMenu">
-                                                <Button Classes="MediaContextMenuItem" Content="Копировать" HorizontalAlignment="Stretch" Command="{Binding $parent[ListBox].DataContext.CopyMediaCommand}" CommandParameter="{Binding Id}"/>
-                                                <Button Classes="MediaContextMenuItem" Content="Открыть в проводнике" HorizontalAlignment="Stretch" Command="{Binding $parent[ListBox].DataContext.OpenMediaInExplorerCommand}" CommandParameter="{Binding Id}"/>
-                                                <Button Classes="MediaContextMenuItem" Content="Запустить" HorizontalAlignment="Stretch" Command="{Binding $parent[ListBox].DataContext.PlayMediaCommand}" CommandParameter="{Binding Id}"/>
-                                                <Button Classes="MediaContextMenuItem" Content="Удалить" HorizontalAlignment="Stretch" Command="{Binding $parent[ListBox].DataContext.DeleteMediaCommand}" CommandParameter="{Binding Id}"/>
-                                            </StackPanel>
-                                        </Flyout>
-                                    </Border.ContextFlyout>
                                     <Grid RowDefinitions="Auto, Auto">
                                         <Border Grid.Row="0" BorderBrush="White" BorderThickness="1">
                                             <Viewbox Stretch="Fill" Height="200">
