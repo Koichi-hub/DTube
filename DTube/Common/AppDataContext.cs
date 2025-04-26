@@ -9,17 +9,17 @@ namespace DTube.Common
         public delegate void UpdateHandler();
         public event UpdateHandler? OnUpdated;
 
-        public MediaMetaDataModel? CurrentMedia { get; set; }
-        public List<MediaMetaDataModel> MediaList { get; set; } = [];
+        public MediaMetaDataView? CurrentMedia { get; set; }
+        public List<MediaMetaData> MediaList { get; set; } = [];
 
-        public void AddMedia(MediaMetaDataModel media)
+        public void AddMedia(MediaMetaData media)
         {
             MediaList.Add(media);
             mediaMetaDataDAO.SaveMediaMetaData(MediaList);
             OnUpdated?.Invoke();
         }
 
-        public void DeleteMedia(MediaMetaDataModel media)
+        public void DeleteMedia(MediaMetaData media)
         {
             MediaList.RemoveAll(x => x.Id == media.Id);
             mediaMetaDataDAO.SaveMediaMetaData(MediaList);
@@ -32,7 +32,7 @@ namespace DTube.Common
             OnUpdated?.Invoke();
         }
 
-        public void SetCurrentMedia(MediaMetaDataModel media)
+        public void SetCurrentMedia(MediaMetaDataView media)
         {
             CurrentMedia = media;
             OnUpdated?.Invoke();

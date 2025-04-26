@@ -14,7 +14,7 @@ namespace DTube.Common.Services
     {
         private readonly YoutubeClient youtubeClient = new();
 
-        public async Task<MediaMetaDataModel> GetMediaByLinkAsync(string url)
+        public async Task<MediaMetaDataView> GetMediaByLinkAsync(string url)
         {
             Video video = await youtubeClient.Videos.GetAsync(url);
             Thumbnail videoThumbnail = video.Thumbnails.GetWithHighestResolution();
@@ -31,24 +31,18 @@ namespace DTube.Common.Services
                 .OrderByDescending(s => s.VideoQuality)
                 .ToList();
 
-            long sizeInBytes = 0;
-            if (AudioOnlyStreamInfos.Count > 0)
-            {
-                sizeInBytes = AudioOnlyStreamInfos.First().Size.Bytes;
-            }
-            else if (VideoOnlyStreamInfos.Count > 0)
-            {
-                sizeInBytes = VideoOnlyStreamInfos.First().Size.Bytes;
-            }
+            long audioSizeInBytes = AudioOnlyStreamInfos.First().Size.Bytes;
+            long videoSizeInBytes = VideoOnlyStreamInfos.First().Size.Bytes;
 
-            return new MediaMetaDataModel
+            return new MediaMetaDataView
             {
                 SourceUrl = url,
                 PreviewSourceUrl = videoThumbnail.Url,
                 Title = video.Title,
                 Description = video.Description,
-                SizeInBytes = sizeInBytes,
-                Duration = video.Duration!.Value.Seconds,
+                Duration = video.Duration!.Value,
+                AudioSizeInBytes = audioSizeInBytes,
+                VideoSizeInBytes = videoSizeInBytes,
             };
         }
 

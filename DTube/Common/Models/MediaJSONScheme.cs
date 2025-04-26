@@ -4,6 +4,6 @@ namespace DTube.Common.Models
 {
     public class MediaJSONScheme
     {
-        public List<MediaMetaDataModel> Media { get; set; } = [];
+        public List<MediaMetaData> Media { get; set; } = [];
     }
 }

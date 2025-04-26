@@ -35,18 +35,20 @@
     </Style>
 
     <!-- Media Item -->
+    <Style Selector="ListBox.MediaItemContainer">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
     <Style Selector="ListBox.MediaItemContainer ListBoxItem">
         <Setter Property="VerticalAlignment" Value="Top"/>
-        <Setter Property="Background" Value="#212121"/>
-        <Setter Property="Padding" Value="5"/>
+        <Setter Property="Padding" Value="10"/>
+        <Setter Property="CornerRadius" Value="15"/>
+        <Setter Property="Background" Value="#808080"/>
+        <Setter Property="Margin" Value="5"/>
     </Style>
     <Style Selector="ListBox.MediaItemContainer ListBoxItem:pointerover /template/ ContentPresenter">
         <Setter Property="Background" Value="#FF0033"/>
     </Style>
     <Style Selector="ListBox.MediaItemContainer ListBoxItem:selected /template/ ContentPresenter">
         <Setter Property="Background" Value="#FF0033"/>
-    </Style>
-    <Style Selector="Border.MediaItem">
-        <Setter Property="Background" Value="Transparent"/>
     </Style>
 </Styles>

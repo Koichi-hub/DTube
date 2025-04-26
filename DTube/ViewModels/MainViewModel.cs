@@ -79,21 +79,21 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    public MediaMetaDataModel? SelectedMediaListItem { get; set; }
+    public MediaMetaData? SelectedMediaListItem { get; set; }
 
-    private MediaMetaDataModel mediaModel = new()
+    private MediaMetaDataView mediaModel = new()
     {
         Title = "Title",
         Description = "Description",
     };
-    public MediaMetaDataModel MediaModel
+    public MediaMetaDataView MediaModel
     {
         get => mediaModel;
         set => this.RaiseAndSetIfChanged(ref mediaModel, value);
     }
 
-    private List<MediaMetaDataModel> mediaModels = [];
-    public List<MediaMetaDataModel> MediaModels
+    private List<MediaMetaData> mediaModels = [];
+    public List<MediaMetaData> MediaModels
     {
         get => mediaModels;
         set => this.RaiseAndSetIfChanged(ref mediaModels, value);
@@ -136,7 +136,7 @@ public class MainViewModel : ViewModelBase
         }
         else
         {
-            MediaModel = new MediaMetaDataModel
+            MediaModel = new MediaMetaDataView
             {
                 Title = "Title",
                 Description = "Description",
@@ -230,7 +230,7 @@ public class MainViewModel : ViewModelBase
             return;
         }
 
-        MediaMetaDataModel media = SelectedMediaListItem!;
+        MediaMetaData media = SelectedMediaListItem!;
 
         IStorageFile? file = await storageProvider.TryGetFileFromPathAsync(media.FilePath);
         if (file != null)
@@ -251,7 +251,7 @@ public class MainViewModel : ViewModelBase
             return;
         }
 
-        MediaMetaDataModel media = SelectedMediaListItem!;
+        MediaMetaData media = SelectedMediaListItem!;
 
         await launcher.LaunchDirectoryInfoAsync(new DirectoryInfo(Path.GetDirectoryName(media.FilePath)!));
     }
@@ -266,14 +266,14 @@ public class MainViewModel : ViewModelBase
             return;
         }
 
-        MediaMetaDataModel media = SelectedMediaListItem!;
+        MediaMetaData media = SelectedMediaListItem!;
 
         await launcher.LaunchFileInfoAsync(new FileInfo(media.FilePath));
     }
 
     public void DeleteMedia()
     {
-        MediaMetaDataModel media = SelectedMediaListItem!;
+        MediaMetaData media = SelectedMediaListItem!;
 
         try
         {
@@ -292,7 +292,7 @@ public class MainViewModel : ViewModelBase
     {
         if (IsVideoFilter == IsMusicFilter)
         {
-            MediaModels = new List<MediaMetaDataModel>(appDataContext.MediaList);
+            MediaModels = new List<MediaMetaData>(appDataContext.MediaList);
         } 
         else
         {
