@@ -36,7 +36,7 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private bool isMediaBlockVisible = false;
+    private bool isMediaBlockVisible = true;
     public bool IsMediaBlockVisible
     {
         get => isMediaBlockVisible;

@@ -32,7 +32,12 @@ namespace DTube.Common.Services
                 .ToList();
 
             long audioSizeInBytes = AudioOnlyStreamInfos.First().Size.Bytes;
-            long videoSizeInBytes = VideoOnlyStreamInfos.First().Size.Bytes;
+
+            List<MediaMetaDataView.VideoResolutionDataView> videoResolutions = VideoOnlyStreamInfos.Select(x => new MediaMetaDataView.VideoResolutionDataView
+            {
+                VideoSizeInBytes = x.Size.Bytes,
+                Resolution = x.VideoQuality.Label,
+            }).ToList();
 
             return new MediaMetaDataView
             {
@@ -42,7 +47,8 @@ namespace DTube.Common.Services
                 Description = video.Description,
                 Duration = video.Duration!.Value,
                 AudioSizeInBytes = audioSizeInBytes,
-                VideoSizeInBytes = videoSizeInBytes,
+                VideoResolutions = videoResolutions,
+                SelectedVideoResolution = videoResolutions.First(),
             };
         }
 
@@ -56,7 +62,7 @@ namespace DTube.Common.Services
             if (isAudio)
                 streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
             else
-                streamInfo = streamManifest.GetVideoOnlyStreams().GetWithHighestBitrate();
+                streamInfo = streamManifest.GetVideoOnlyStreams().First(x => x.VideoQuality.Label == "480p");
 
             string filePath = Path.Combine(outputDirectory, $"{fileName}.{streamInfo.Container}");
             await youtubeClient.Videos.Streams.DownloadAsync(streamInfo, filePath);

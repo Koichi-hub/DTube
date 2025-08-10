@@ -85,7 +85,7 @@
                                             <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Title}" Foreground="White"/>
 
                                             <TextBlock Grid.Row="1" FontWeight="Bold" Text="Размер видео (без звука):" Foreground="White" Margin="0 0 5 5"/>
-                                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding VideoSizeView}" Foreground="White"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedVideoResolution.VideoSizeView}" Foreground="White"/>
 
                                             <TextBlock Grid.Row="2" FontWeight="Bold" Text="Размер звука:" Foreground="White" Margin="0 0 5 5"/>
                                             <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding AudioSizeView}" Foreground="White"/>
@@ -104,8 +104,17 @@
                                             <StackPanel>
                                                 <TextBlock FontWeight="Bold" Foreground="White">Скачать:</TextBlock>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
-                                                    <Button CornerRadius="15" Background="#808080" Content="Видео" Command="{Binding $parent[ContentControl].DataContext.DownloadVideoCommand}"/>
-                                                    <Button CornerRadius="15" Background="#808080" Content="Музыка" Command="{Binding $parent[ContentControl].DataContext.DownloadMusicCommand}"/>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Button CornerRadius="15 0 0 15" Padding="8 6 8 7" Background="#808080" Content="Видео" Command="{Binding $parent[ContentControl].DataContext.DownloadVideoCommand}"/>
+                                                        <ComboBox CornerRadius="0 15 15 0" ItemsSource="{Binding VideoResolutions}" SelectedItem="{Binding SelectedVideoResolution}" BorderThickness="0" Background="#808080" MaxDropDownHeight="100">
+                                                            <ComboBox.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBlock Text="{Binding Resolution}"/>
+                                                                </DataTemplate>
+                                                            </ComboBox.ItemTemplate>
+                                                        </ComboBox>
+                                                    </StackPanel>
+                                                    <Button Padding="8 6 8 7" CornerRadius="15" Background="#808080" Content="Музыка" Command="{Binding $parent[ContentControl].DataContext.DownloadMusicCommand}"/>
                                                 </StackPanel>
                                             </StackPanel>
                                         </Border>
@@ -166,7 +175,7 @@
                                             <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Duration}" Foreground="White"/>
                                         </Grid>
                                     </Grid>
-                                    <Border Background="#FF0033" Padding="5" CornerRadius="15 0 0 0" VerticalAlignment="Top" HorizontalAlignment="Left" BorderBrush="#212121" BorderThickness="1">
+                                    <Border Background="#FF0033" Padding="5" CornerRadius="15 0 15 0" VerticalAlignment="Top" HorizontalAlignment="Left" BorderBrush="#212121" BorderThickness="1">
                                         <TextBlock Text="{Binding TypeView}"/>
                                     </Border>
                                 </Panel>

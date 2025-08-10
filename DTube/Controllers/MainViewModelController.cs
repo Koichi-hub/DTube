@@ -44,7 +44,7 @@ namespace DTube.Controllers
             File.Move(mp3FilePath, filePath);
 
             FileInfo fileInfo = new(filePath);
-            MediaMetaData media = JsonConvert.DeserializeObject<MediaMetaData>(JsonConvert.SerializeObject(appDataContext.CurrentMedia!))!;
+            MediaMetaData media = appDataContext.CurrentMedia!;
 
             media.SizeInBytes = fileInfo.Length;
             media.FilePath = filePath;
@@ -52,6 +52,8 @@ namespace DTube.Controllers
                 url: media.PreviewSourceUrl, 
                 fileName: Path.GetFileNameWithoutExtension(filePath), 
                 outputDirectory: Constants.MediaPreviewImageFolderPath);
+
+            MediaHelper.AddMP3Tags(media);
 
             media.Id = mediaId;
             media.Type = Common.Enums.MediaType.Music;
