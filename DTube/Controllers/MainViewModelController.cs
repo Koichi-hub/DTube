@@ -52,11 +52,11 @@ namespace DTube.Controllers
                 url: media.PreviewSourceUrl, 
                 fileName: Path.GetFileNameWithoutExtension(filePath), 
                 outputDirectory: Constants.MediaPreviewImageFolderPath);
+            media.Id = mediaId;
+            media.Type = Common.Enums.MediaType.Music;
 
             MediaHelper.AddMP3Tags(media);
 
-            media.Id = mediaId;
-            media.Type = Common.Enums.MediaType.Music;
             appDataContext.AddMedia(media);
         }
 
